@@ -9,23 +9,8 @@ down:
 
 re: fclean all
 
-stop:
-	$(COMPOSE) stop
-
-start:
-	$(COMPOSE) start
-
-logs:
-	$(COMPOSE) logs -f
-
-status:
-	$(COMPOSE) ps
-
-clean:
-	$(COMPOSE) down --rmi all
-
-fclean: clean
+fclean: down
 	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	rm -rf /home/abbouras/data
 
-.PHONY: all down re stop start logs status clean fclean
+.PHONY: all down re fclean
