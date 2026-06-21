@@ -1,51 +1,17 @@
 # Developer Documentation
 
-## Prerequisites
+## Setup
 
-- Docker Engine and Docker Compose plugin installed
-- Linux machine or VM
-- Domain `abbouras.42.fr` pointing to localhost:
+Docker Engine + Docker Compose plugin installés, Linux ou VM.
 
+Ajouter le domaine :
 ```bash
 echo "127.0.0.1 abbouras.42.fr" | sudo tee -a /etc/hosts
 ```
 
----
+Créer les fichiers de config avant de builder :
 
-## Project structure
-
-```
-.
-├── Makefile                          # Build and lifecycle commands
-├── secrets/                          # Passwords (ignored by Git)
-│   ├── credentials.txt               # WordPress admin and user passwords
-│   ├── db_password.txt               # MariaDB user password
-│   ├── db_root_password.txt          # MariaDB root password
-│   ├── wp_admin_password.txt         # WordPress admin password
-│   └── wp_user_password.txt          # WordPress user password
-└── srcs/
-    ├── .env                          # Environment variables (ignored by Git)
-    ├── docker-compose.yml            # Infrastructure definition
-    └── requirements/
-        ├── mariadb/
-        │   ├── Dockerfile
-        │   ├── conf/my.cnf           # MariaDB config (bind-address, port)
-        │   └── tools/init.sh         # DB initialization script
-        ├── nginx/
-        │   ├── Dockerfile
-        │   └── conf/nginx.conf       # NGINX TLS + FastCGI config
-        └── wordpress/
-            ├── Dockerfile
-            ├── conf/www.conf         # php-fpm pool config
-            └── tools/setup.sh        # WordPress installation script
-```
-
----
-
-## Configuration files
-
-### `srcs/.env`
-
+**`srcs/.env`**
 ```env
 DOMAIN_NAME=abbouras.42.fr
 MYSQL_HOST=mariadb
@@ -58,66 +24,81 @@ WP_USER=wpuser
 WP_USER_EMAIL=wpuser@student.42.fr
 ```
 
-### `secrets/`
-
-Each file contains a single password on one line:
-
+**`secrets/`** — un mot de passe par fichier, une seule ligne :
 ```
-secrets/db_password.txt         → MariaDB user password
-secrets/db_root_password.txt    → MariaDB root password
-secrets/wp_admin_password.txt   → WordPress admin password
-secrets/wp_user_password.txt    → WordPress user password
+secrets/db_password.txt
+secrets/db_root_password.txt
+secrets/wp_admin_password.txt
+secrets/wp_user_password.txt
 ```
 
 ---
 
-## Build and launch
+## Structure
 
-```bash
-make        # creates /home/abbouras/data/, builds images, starts containers
-make down   # stops and removes containers
-make re     # full rebuild from scratch
-make logs   # follow logs from all containers
-make status # show container status
+```
+.
+├── Makefile
+├── secrets/                          # ignoré par git
+│   ├── credentials.txt
+│   ├── db_password.txt
+│   ├── db_root_password.txt
+│   ├── wp_admin_password.txt
+│   └── wp_user_password.txt
+└── srcs/
+    ├── .env                          # ignoré par git
+    ├── docker-compose.yml
+    └── requirements/
+        ├── mariadb/
+        │   ├── Dockerfile
+        │   ├── conf/my.cnf
+        │   └── tools/init.sh
+        ├── nginx/
+        │   ├── Dockerfile
+        │   └── conf/nginx.conf
+        └── wordpress/
+            ├── Dockerfile
+            ├── conf/www.conf
+            └── tools/setup.sh
 ```
 
 ---
 
-## Useful container commands
+## Commandes
 
 ```bash
-# Enter MariaDB shell
+make          # crée /home/abbouras/data/, build et démarre
+make down     # arrête et supprime les conteneurs
+make re       # rebuild complet
+make logs     # logs en temps réel
+make status   # état des conteneurs
+```
+
+Commandes utiles pour déboguer :
+
+```bash
 docker exec -it mariadb mysql -uroot -p
-
-# Check WordPress files
 docker exec -it wordpress ls /var/www/html
-
-# Check NGINX config
 docker exec -it nginx nginx -t
-
-# Inspect volumes (verify /home/abbouras/data/ path)
 docker volume inspect srcs_mariadb_data
-docker volume inspect srcs_wordpress_data
 ```
 
 ---
 
-## Data persistence
+## Données persistantes
 
-WordPress files and the MariaDB database are stored on the host machine at:
+Les données sont stockées sur la machine hôte dans `/home/abbouras/data/` :
 
 ```
 /home/abbouras/data/
-├── db/         → MariaDB data files
-└── wordpress/  → WordPress files (wp-content, wp-config.php, etc.)
+├── db/         → fichiers MariaDB
+└── wordpress/  → fichiers WordPress
 ```
 
-These directories are mounted as named Docker volumes. Data persists across container restarts and reboots.
+Ces dossiers sont montés via des volumes nommés — les données survivent aux redémarrages des conteneurs.
 
 ---
 
-## How startup order works
+## Ordre de démarrage
 
-1. `mariadb` starts first and initializes the database (only on first run)
-2. `wordpress` waits for MariaDB to respond (ping loop), then configures WordPress via wp-cli
-3. `nginx` starts after WordPress and proxies HTTPS requests to php-fpm on port 9000
+mariadb démarre en premier et initialise la BDD si c'est le premier lancement. wordpress attend que MariaDB réponde (boucle de ping), puis lance l'installation via wp-cli. nginx démarre en dernier et proxifie les requêtes HTTPS vers php-fpm sur le port 9000.

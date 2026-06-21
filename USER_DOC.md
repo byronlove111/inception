@@ -1,66 +1,50 @@
 # User Documentation
 
-## What services are provided
+## Services
 
-This stack provides a WordPress website accessible at `https://abbouras.42.fr`.
+Le projet expose un site WordPress sur `https://abbouras.42.fr`.
 
-| Service | Role | Port |
-|---|---|---|
-| NGINX | Entry point, HTTPS termination | 443 (public) |
-| WordPress | Website and admin panel | 9000 (internal) |
-| MariaDB | Database | 3306 (internal) |
+Trois conteneurs tournent en arrière-plan :
+- **nginx** — reçoit les connexions HTTPS sur le port 443
+- **wordpress** — fait tourner le site (port 9000, interne)
+- **mariadb** — la base de données (port 3306, interne)
 
-Only port 443 is accessible from outside. All other ports are internal to the Docker network.
+Seul le port 443 est accessible depuis l'extérieur.
 
 ---
 
-## Start the project
+## Démarrer / arrêter
 
 ```bash
-make
+make        # démarre tout
+make down   # arrête tout
 ```
 
-This builds all images and starts the containers. Wait ~30 seconds for WordPress to finish setup on first run.
+Au premier démarrage, WordPress s'installe automatiquement — attendre ~30 secondes avant d'ouvrir le navigateur.
 
-## Stop the project
-
-```bash
-make down
-```
-
-## Check that services are running
-
+Pour vérifier que tout tourne :
 ```bash
 make status
 ```
-
-All three containers (`nginx`, `wordpress`, `mariadb`) should show status `Up`.
-
----
-
-## Access the website
-
-Open your browser and go to:
-
-```
-https://abbouras.42.fr
-```
-
-> A security warning will appear because the TLS certificate is self-signed. Click "Advanced" and proceed.
-
-## Access the administration panel
-
-```
-https://abbouras.42.fr/wp-admin
-```
+Les trois conteneurs doivent afficher `Up`.
 
 ---
 
-## Credentials
+## Accès
 
-Credentials are stored in the `secrets/` folder at the root of the repository (not tracked by Git).
+Site : `https://abbouras.42.fr`
 
-| Account | Username | Password file |
+Admin WordPress : `https://abbouras.42.fr/wp-admin`
+
+> Le navigateur va afficher un avertissement de sécurité car le certificat TLS est auto-signé. Cliquer sur "Avancé" puis continuer.
+
+---
+
+## Identifiants
+
+Tout est dans le dossier `secrets/` à la racine du projet (non tracké par git).
+
+| Compte | Login | Fichier |
 |---|---|---|
 | WordPress Admin | `wpadmin` | `secrets/credentials.txt` |
 | WordPress User | `wpuser` | `secrets/credentials.txt` |
@@ -69,15 +53,11 @@ Credentials are stored in the `secrets/` folder at the root of the repository (n
 
 ---
 
-## Check services are running correctly
+## Vérifier que tout fonctionne
 
 ```bash
-# Status of all containers
-make status
-
-# Live logs
 make logs
 
-# Connect to MariaDB and verify the database is not empty
+# vérifier que la BDD wordpress n'est pas vide
 docker exec -it mariadb mysql -uabbouras -p wordpress -e "SHOW TABLES;"
 ```

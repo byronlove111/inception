@@ -1,22 +1,16 @@
 services:
 
   mariadb:
-    # Nom de l'image — doit correspondre au nom du service (requis par le sujet)
     image: mariadb
-    # Chemin vers le Dockerfile pour construire l'image
     build: ./requirements/mariadb
     container_name: mariadb
-    # Redémarre automatiquement en cas de crash
     restart: always
-    # Variables d'environnement lues depuis le fichier .env
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER:     ${MYSQL_USER}
-    # Secrets Docker — les mots de passe sont montés dans /run/secrets/
     secrets:
       - db_password
       - db_root_password
-    # Monte le volume de la base de données dans le dossier de données MariaDB
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -41,12 +35,10 @@ services:
       - db_password
       - wp_admin_password
       - wp_user_password
-    # Monte le volume WordPress dans le dossier servi par NGINX et php-fpm
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
-    # WordPress doit démarrer après MariaDB
     depends_on:
       - mariadb
 
@@ -55,19 +47,15 @@ services:
     build: ./requirements/nginx
     container_name: nginx
     restart: always
-    # Seul port exposé vers l'extérieur — port 443 uniquement (requis par le sujet)
     ports:
       - "443:443"
-    # Partage le volume WordPress pour accéder aux fichiers PHP à servir
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - inception_network
-    # NGINX doit démarrer après WordPress
     depends_on:
       - wordpress
 
-# Déclaration des secrets — Docker lit les fichiers et les monte dans /run/secrets/
 secrets:
   db_password:
     file: ../secrets/db_password.txt
@@ -78,12 +66,10 @@ secrets:
   wp_user_password:
     file: ../secrets/wp_user_password.txt
 
-# Déclaration du réseau bridge — les conteneurs se parlent via les noms de service
 networks:
   inception_network:
     driver: bridge
 
-# Déclaration des volumes — stockés dans /home/abbouras/data/ sur la machine hôte
 volumes:
   mariadb_data:
     driver: local
