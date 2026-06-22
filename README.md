@@ -4,46 +4,46 @@
 
 ## Description
 
-Inception est un projet de sysadmin qui consiste à monter une petite infrastructure avec Docker Compose. Trois services tournent dans des conteneurs séparés sur un réseau Docker privé :
+Inception is a sysadmin project that consists of setting up a small infrastructure with Docker Compose. Three services run in separate containers on a private Docker network:
 
-- **NGINX** — point d'entrée unique, TLS sur le port 443 (TLSv1.2/1.3)
-- **WordPress + php-fpm** — le site et l'admin
-- **MariaDB** — la base de données
+- **NGINX** — single entry point, TLS on port 443 (TLSv1.2/1.3)
+- **WordPress + php-fpm** — the website and admin panel
+- **MariaDB** — the database
 
-Tous les Dockerfiles sont basés sur Debian Bookworm (oldstable). Aucune image pre-built depuis Docker Hub.
+All Dockerfiles are based on Debian Bookworm (oldstable). No pre-built images from Docker Hub.
 
 ### Virtual Machines vs Docker
 
-Une VM émule un OS complet avec son propre kernel — ça prend plusieurs Go et quelques minutes à démarrer. Docker isole des processus via les namespaces Linux en partageant le kernel de la machine hôte. Résultat : des images de quelques dizaines de Mo et un démarrage quasi-instantané. La contrepartie c'est que l'isolation est moins forte qu'une VM.
+A VM emulates a full OS with its own kernel — it takes several GB and a few minutes to start. Docker isolates processes via Linux namespaces while sharing the host kernel. The result is images of a few tens of MB and near-instant startup. The trade-off is that isolation is weaker than a VM.
 
 ### Secrets vs Environment Variables
 
-Les variables d'environnement sont visibles dans la mémoire du processus et peuvent être exposées via `env` ou `docker inspect`. Les Docker secrets sont montés comme fichiers dans `/run/secrets/` avec des permissions restreintes — mieux adapté pour des mots de passe.
+Environment variables are visible in process memory and can be exposed via `env` or `docker inspect`. Docker secrets are mounted as files in `/run/secrets/` with restricted permissions — better suited for passwords.
 
 ### Docker Network vs Host Network
 
-Avec un réseau bridge Docker, chaque conteneur a son propre namespace réseau et une résolution DNS automatique par nom de service. En mode `host`, le conteneur partage directement la stack réseau de l'hôte — tous les ports sont exposés, pas de DNS Docker. Le sujet interdit `network: host`.
+With a Docker bridge network, each container has its own network namespace and automatic DNS resolution by service name. In `host` mode, the container directly shares the host's network stack — all ports are exposed, no Docker DNS. The subject forbids `network: host`.
 
 ### Docker Volumes vs Bind Mounts
 
-Les volumes nommés sont gérés par Docker, portables et indépendants du chemin hôte. Les bind mounts lient directement un dossier de l'hôte — pratiques en dev mais pas portables. Le sujet impose les volumes nommés (les bind mounts sont interdits).
+Named volumes are managed by Docker, portable and independent of the host path. Bind mounts directly link a folder from the host — convenient in dev but not portable. The subject requires named volumes (bind mounts are forbidden).
 
 ---
 
 ## Instructions
 
-Prérequis : Docker et Docker Compose installés, Linux ou VM.
+Requirements: Docker and Docker Compose installed, Linux or VM.
 
-Ajouter le domaine dans `/etc/hosts` :
+Add the domain to `/etc/hosts`:
 
 ```bash
 echo "127.0.0.1 abbouras.42.fr" | sudo tee -a /etc/hosts
 ```
 
 ```bash
-make          # build les images et démarre tout
-make down     # arrête les conteneurs
-make fclean   # repart de zéro (supprime tout)
+make          # build images and start everything
+make down     # stop containers
+make fclean   # full reset (removes everything)
 ```
 
 ---
@@ -56,4 +56,4 @@ make fclean   # repart de zéro (supprime tout)
 - [NGINX FastCGI + PHP](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html)
 - [Debian releases](https://www.debian.org/releases/)
 
-L'IA a servi principalement pour comprendre le fonctionnement de PID 1 dans Docker et les différences entre les modes de démarrage de MariaDB (bootstrap vs normal). Tout le code a été relu, testé et compris avant d'être intégré.
+AI was mainly used to understand how PID 1 works in Docker and the differences between MariaDB startup modes (bootstrap vs normal). All code was reviewed, tested and understood before being integrated.
