@@ -2,49 +2,49 @@
 
 ## Services
 
-Le projet expose un site WordPress sur `https://abbouras.42.fr`.
+The project exposes a WordPress website at `https://abbouras.42.fr`.
 
-Trois conteneurs tournent en arrière-plan :
-- **nginx** — reçoit les connexions HTTPS sur le port 443
-- **wordpress** — fait tourner le site (port 9000, interne)
-- **mariadb** — la base de données (port 3306, interne)
+Three containers run in the background:
+- **nginx** — handles HTTPS connections on port 443
+- **wordpress** — runs the website (port 9000, internal)
+- **mariadb** — the database (port 3306, internal)
 
-Seul le port 443 est accessible depuis l'extérieur.
+Only port 443 is accessible from outside.
 
 ---
 
-## Démarrer / arrêter
+## Start / stop
 
 ```bash
-make        # démarre tout
-make down   # arrête tout
+make        # start everything
+make down   # stop everything
 ```
 
-Au premier démarrage, WordPress s'installe automatiquement — attendre ~30 secondes avant d'ouvrir le navigateur.
+On first start, WordPress installs automatically — wait ~30 seconds before opening the browser.
 
-Pour vérifier que tout tourne :
+To check everything is running:
 ```bash
 make status
 ```
-Les trois conteneurs doivent afficher `Up`.
+All three containers should show `Up`.
 
 ---
 
-## Accès
+## Access
 
-Site : `https://abbouras.42.fr`
+Website: `https://abbouras.42.fr`
 
-Admin WordPress : `https://abbouras.42.fr/wp-admin`
+WordPress admin panel: `https://abbouras.42.fr/wp-admin`
 
-> Le navigateur va afficher un avertissement de sécurité car le certificat TLS est auto-signé. Cliquer sur "Avancé" puis continuer.
+> The browser will show a security warning because the TLS certificate is self-signed. Click "Advanced" and proceed anyway.
 
 ---
 
-## Identifiants
+## Credentials
 
-Tout est dans le dossier `secrets/` à la racine du projet (non tracké par git).
+Everything is in the `secrets/` folder at the root of the project (not tracked by git).
 
-| Compte | Login | Fichier |
+| Account | Username | File |
 |---|---|---|
 | WordPress Admin | `wpadmin` | `secrets/credentials.txt` |
 | WordPress User | `wpuser` | `secrets/credentials.txt` |
@@ -53,11 +53,11 @@ Tout est dans le dossier `secrets/` à la racine du projet (non tracké par git)
 
 ---
 
-## Vérifier que tout fonctionne
+## Check that everything works
 
 ```bash
 make logs
 
-# vérifier que la BDD wordpress n'est pas vide
+# check that the wordpress database is not empty
 docker exec -it mariadb mysql -uabbouras -p wordpress -e "SHOW TABLES;"
 ```

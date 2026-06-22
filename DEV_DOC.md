@@ -2,14 +2,14 @@
 
 ## Setup
 
-Docker Engine + Docker Compose plugin installés, Linux ou VM.
+Docker Engine + Docker Compose plugin installed, Linux or VM.
 
-Ajouter le domaine :
+Add the domain:
 ```bash
 echo "127.0.0.1 abbouras.42.fr" | sudo tee -a /etc/hosts
 ```
 
-Créer les fichiers de config avant de builder :
+Create the config files before building:
 
 **`srcs/.env`**
 ```env
@@ -24,7 +24,7 @@ WP_USER=wpuser
 WP_USER_EMAIL=wpuser@student.42.fr
 ```
 
-**`secrets/`** — un mot de passe par fichier, une seule ligne :
+**`secrets/`** — one password per file, single line:
 ```
 secrets/db_password.txt
 secrets/db_root_password.txt
@@ -39,14 +39,14 @@ secrets/wp_user_password.txt
 ```
 .
 ├── Makefile
-├── secrets/                          # ignoré par git
+├── secrets/                          # ignored by git
 │   ├── credentials.txt
 │   ├── db_password.txt
 │   ├── db_root_password.txt
 │   ├── wp_admin_password.txt
 │   └── wp_user_password.txt
 └── srcs/
-    ├── .env                          # ignoré par git
+    ├── .env                          # ignored by git
     ├── docker-compose.yml
     └── requirements/
         ├── mariadb/
@@ -64,17 +64,15 @@ secrets/wp_user_password.txt
 
 ---
 
-## Commandes
+## Commands
 
 ```bash
-make          # crée /home/abbouras/data/, build et démarre
-make down     # arrête et supprime les conteneurs
-make re       # rebuild complet
-make logs     # logs en temps réel
-make status   # état des conteneurs
+make          # creates /home/abbouras/data/, builds and starts
+make down     # stops and removes containers
+make re       # full rebuild from scratch
 ```
 
-Commandes utiles pour déboguer :
+Useful commands for debugging:
 
 ```bash
 docker exec -it mariadb mysql -uroot -p
@@ -85,20 +83,20 @@ docker volume inspect srcs_mariadb_data
 
 ---
 
-## Données persistantes
+## Persistent data
 
-Les données sont stockées sur la machine hôte dans `/home/abbouras/data/` :
+Data is stored on the host machine under `/home/abbouras/data/`:
 
 ```
 /home/abbouras/data/
-├── db/         → fichiers MariaDB
-└── wordpress/  → fichiers WordPress
+├── db/         → MariaDB data files
+└── wordpress/  → WordPress files
 ```
 
-Ces dossiers sont montés via des volumes nommés — les données survivent aux redémarrages des conteneurs.
+These directories are mounted as named volumes — data survives container restarts.
 
 ---
 
-## Ordre de démarrage
+## Startup order
 
-mariadb démarre en premier et initialise la BDD si c'est le premier lancement. wordpress attend que MariaDB réponde (boucle de ping), puis lance l'installation via wp-cli. nginx démarre en dernier et proxifie les requêtes HTTPS vers php-fpm sur le port 9000.
+mariadb starts first and initializes the database on first run. wordpress waits for MariaDB to respond (ping loop), then installs WordPress via wp-cli. nginx starts last and proxies HTTPS requests to php-fpm on port 9000.
