@@ -6,7 +6,13 @@ WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 
 echo "Waiting for MariaDB..."
+i=0
 until mysqladmin ping -h"$MYSQL_HOST" -u"$MYSQL_USER" -p"$DB_PASSWORD" --silent 2>/dev/null; do
+    i=$((i + 1))
+    if [ "$i" -ge 30 ]; then
+        echo "MariaDB did not respond after 30 seconds, aborting."
+        exit 1
+    fi
     sleep 1
 done
 echo "MariaDB is ready."
