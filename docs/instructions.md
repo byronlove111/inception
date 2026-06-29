@@ -1,21 +1,49 @@
 # Instructions — Déploiement sur la VM 42
 
-## 1. Installer Docker
+## Avant de commencer
+
+Le projet a des chemins hardcodés vers `/home/abbouras/data/`.
+**Le user Linux de la VM doit obligatoirement s'appeler `abbouras`.**
+Ce n'est pas le hostname qui compte, c'est le nom d'utilisateur.
+
+---
+
+## 1. Créer la VM
+
+- Logiciel : VirtualBox ou VMware
+- OS : Debian ou Ubuntu (version récente)
+- **Username : `abbouras`** (obligatoire)
+- RAM : 2 Go minimum recommandé
+- Disque : 20 Go minimum
+
+---
+
+## 2. Installer Docker
 
 ```bash
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER
-# Ferme et rouvre le terminal pour appliquer le groupe
 ```
 
-## 2. Cloner le repo
+Ferme et rouvre le terminal pour appliquer le groupe, puis vérifie :
+
+```bash
+docker --version
+docker compose version
+```
+
+---
+
+## 3. Cloner le repo
 
 ```bash
 git clone <url_du_repo>
 cd inception
 ```
 
-## 3. Créer les fichiers secrets (non trackés par Git)
+---
+
+## 4. Créer les fichiers secrets (non trackés par Git)
 
 ```bash
 mkdir -p secrets
@@ -35,7 +63,9 @@ WP_USER_EMAIL=wpuser@student.42.fr
 EOF
 ```
 
-## 4. Créer le fichier .env (non tracké par Git)
+---
+
+## 5. Créer le fichier .env (non tracké par Git)
 
 ```bash
 cat > srcs/.env << EOF
@@ -51,26 +81,33 @@ WP_USER_EMAIL=wpuser@student.42.fr
 EOF
 ```
 
-## 5. Configurer le domaine
+---
+
+## 6. Configurer le domaine
 
 ```bash
 echo "127.0.0.1 abbouras.42.fr" | sudo tee -a /etc/hosts
 ```
 
-## 6. Lancer le projet
+---
+
+## 7. Lancer le projet
 
 ```bash
 make
 ```
 
-## 7. Vérifier
+---
+
+## 8. Vérifier
 
 ```bash
-make status
-# Les 3 containers (nginx, wordpress, mariadb) doivent être Up
-
-curl -sk https://abbouras.42.fr -o /dev/null -w "%{http_code}\n"
-# Doit retourner 200
+docker ps
+# Les 3 containers doivent être Up : nginx, wordpress, mariadb
 ```
 
-Ouvre ensuite `https://abbouras.42.fr` dans le navigateur.
+Ouvre ensuite `https://abbouras.42.fr` dans le navigateur de la VM.
+Il y aura une alerte SSL (certificat auto-signé), c'est normal — clique sur "Avancer quand même".
+
+Le site WordPress doit s'afficher.
+Le panel admin est accessible sur `https://abbouras.42.fr/wp-admin` avec `wpadmin` / `wp_admin_password`.
