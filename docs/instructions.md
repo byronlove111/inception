@@ -111,3 +111,44 @@ Il y aura une alerte SSL (certificat auto-signé), c'est normal — clique sur "
 
 Le site WordPress doit s'afficher.
 Le panel admin est accessible sur `https://abbouras.42.fr/wp-admin` avec `wpadmin` / `wp_admin_password`.
+
+---
+
+## 9. Configurer WordPress (avant le snapshot)
+
+- Connecte-toi sur `https://abbouras.42.fr/wp-admin`
+- Édite une page (ex: modifie le contenu de "Sample Page")
+- Vérifie que le changement est visible sur le site
+
+---
+
+## 10. Tester la persistance (avant le snapshot)
+
+```bash
+sudo reboot
+```
+
+Après le redémarrage :
+
+```bash
+make
+```
+
+Vérifie que :
+- `https://abbouras.42.fr` fonctionne encore
+- Le changement fait sur la page WordPress est toujours là
+
+---
+
+## 11. Prendre le snapshot
+
+**C'est maintenant que tu prends le snapshot dans VirtualBox/VMware.**
+
+Le snapshot capture un état propre : tout tourne, reboot testé, WordPress configuré.
+Si un correcteur casse quelque chose, tu restaures le snapshot en 30 secondes et tu es prêt pour le suivant.
+
+---
+
+## Pour la correction
+
+Tu fais le setup **une seule fois** pour tes 3 correcteurs. Ils viennent les uns après les autres sur ta machine, ils voient tous la même VM qui tourne. Tu ne reclones pas entre chaque correction.
