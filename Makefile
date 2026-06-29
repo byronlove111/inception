@@ -10,7 +10,7 @@ down:
 re: fclean all
 
 fclean: down
-	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
+	-docker volume rm $$(docker volume ls -q)
 	rm -rf /home/abbouras/data
 
 .PHONY: all down re fclean
