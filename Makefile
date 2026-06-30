@@ -13,4 +13,7 @@ fclean: down
 	-docker volume rm $$(docker volume ls -q)
 	rm -rf /home/abbouras/data
 
-.PHONY: all down re fclean
+db:
+	docker exec -it mariadb mysql -uroot -prootpassword
+
+.PHONY: all down re fclean db
