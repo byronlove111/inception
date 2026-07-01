@@ -16,4 +16,7 @@ fclean: down
 db:
 	docker exec -it mariadb mysql -uroot -prootpassword
 
-.PHONY: all down re fclean db
+db-check:
+	docker exec -it mariadb mysql -uroot -prootpassword -e "SHOW DATABASES; USE wordpress; SHOW TABLES;"
+
+.PHONY: all down re fclean db db-check
