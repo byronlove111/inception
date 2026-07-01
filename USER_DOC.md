@@ -47,7 +47,7 @@ Everything is in the `secrets/` folder at the root of the project (not tracked b
 
 | Account | Username | File |
 |---|---|---|
-| WordPress Admin | `wpadmin` | `secrets/wp_admin_password.txt` |
+| WordPress Admin | `abbouras` | `secrets/wp_admin_password.txt` |
 | WordPress User | `wpuser` | `secrets/wp_user_password.txt` |
 | MariaDB User | `abbouras` | `secrets/db_password.txt` |
 | MariaDB Root | `root` | `secrets/db_root_password.txt` |

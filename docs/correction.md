@@ -100,7 +100,7 @@ docker volume inspect srcs_wordpress_data
 
 Ensuite dans le navigateur :
 - Aller sur `https://abbouras.42.fr` → poster un commentaire avec le user `wpuser`
-- Aller sur `https://abbouras.42.fr/wp-admin` → se connecter avec `wpadmin` / `wp_admin_password`
+- Aller sur `https://abbouras.42.fr/wp-admin` → se connecter avec `abbouras` / `wp_admin_password`
 - Éditer une page, sauvegarder, vérifier que le changement est visible sur le site
 
 ---

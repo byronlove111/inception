@@ -54,7 +54,7 @@ echo "wp_admin_password" > secrets/wp_admin_password.txt
 echo "wp_user_password"  > secrets/wp_user_password.txt
 
 cat > secrets/credentials.txt << EOF
-WP_ADMIN_USER=wpadmin
+WP_ADMIN_USER=abbouras
 WP_ADMIN_PASSWORD=wp_admin_password
 WP_ADMIN_EMAIL=abbouras@student.42.fr
 WP_USER=wpuser
@@ -74,7 +74,7 @@ MYSQL_HOST=mariadb
 MYSQL_DATABASE=wordpress
 MYSQL_USER=abbouras
 WP_TITLE=Inception
-WP_ADMIN_USER=wpadmin
+WP_ADMIN_USER=abbouras
 WP_ADMIN_EMAIL=abbouras@student.42.fr
 WP_USER=wpuser
 WP_USER_EMAIL=wpuser@student.42.fr
@@ -110,7 +110,7 @@ Ouvre ensuite `https://abbouras.42.fr` dans le navigateur de la VM.
 Il y aura une alerte SSL (certificat auto-signé), c'est normal — clique sur "Avancer quand même".
 
 Le site WordPress doit s'afficher.
-Le panel admin est accessible sur `https://abbouras.42.fr/wp-admin` avec `wpadmin` / `wp_admin_password`.
+Le panel admin est accessible sur `https://abbouras.42.fr/wp-admin` avec `abbouras` / `wp_admin_password`.
 
 ---
 
