@@ -14,9 +14,9 @@ fclean: down
 	sudo rm -rf /home/abbouras/data
 
 db:
-	docker exec -it mariadb mysql -uroot -prootpassword
+	docker exec -it mariadb mysql -uroot -p$$(cat secrets/db_root_password.txt)
 
 db-check:
-	docker exec -it mariadb mysql -uroot -prootpassword -e "SHOW DATABASES; USE wordpress; SHOW TABLES;"
+	docker exec -it mariadb mysql -uroot -p$$(cat secrets/db_root_password.txt) -e "SHOW DATABASES; USE wordpress; SHOW TABLES;"
 
 .PHONY: all down re fclean db db-check
