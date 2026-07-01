@@ -11,7 +11,7 @@ re: fclean all
 
 fclean: down
 	-docker volume rm $$(docker volume ls -q)
-	rm -rf /home/abbouras/data
+	sudo rm -rf /home/abbouras/data
 
 db:
 	docker exec -it mariadb mysql -uroot -prootpassword
