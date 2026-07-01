@@ -18,13 +18,14 @@ Only port 443 is accessible from outside.
 ```bash
 make        # start everything
 make down   # stop everything
+make re     # full rebuild from scratch
 ```
 
 On first start, WordPress installs automatically — wait ~30 seconds before opening the browser.
 
 To check everything is running:
 ```bash
-make status
+docker ps
 ```
 All three containers should show `Up`.
 
@@ -46,8 +47,8 @@ Everything is in the `secrets/` folder at the root of the project (not tracked b
 
 | Account | Username | File |
 |---|---|---|
-| WordPress Admin | `wpadmin` | `secrets/credentials.txt` |
-| WordPress User | `wpuser` | `secrets/credentials.txt` |
+| WordPress Admin | `wpadmin` | `secrets/wp_admin_password.txt` |
+| WordPress User | `wpuser` | `secrets/wp_user_password.txt` |
 | MariaDB User | `abbouras` | `secrets/db_password.txt` |
 | MariaDB Root | `root` | `secrets/db_root_password.txt` |
 
@@ -56,8 +57,8 @@ Everything is in the `secrets/` folder at the root of the project (not tracked b
 ## Check that everything works
 
 ```bash
-make logs
+docker ps
 
 # check that the wordpress database is not empty
-docker exec -it mariadb mysql -uabbouras -p wordpress -e "SHOW TABLES;"
+make db-check
 ```

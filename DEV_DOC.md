@@ -4,33 +4,17 @@
 
 Docker Engine + Docker Compose plugin installed, Linux or VM.
 
-Add the domain:
+Run the setup script:
 ```bash
-echo "127.0.0.1 abbouras.42.fr" | sudo tee -a /etc/hosts
+./setup.sh
 ```
 
-Create the config files before building:
+This will:
+- Copy `secrets.example/` → `secrets/`
+- Copy `srcs/.env.example` → `srcs/.env`
+- Add `127.0.0.1 abbouras.42.fr` to `/etc/hosts`
 
-**`srcs/.env`**
-```env
-DOMAIN_NAME=abbouras.42.fr
-MYSQL_HOST=mariadb
-MYSQL_DATABASE=wordpress
-MYSQL_USER=abbouras
-WP_TITLE=Inception
-WP_ADMIN_USER=wpadmin
-WP_ADMIN_EMAIL=abbouras@student.42.fr
-WP_USER=wpuser
-WP_USER_EMAIL=wpuser@student.42.fr
-```
-
-**`secrets/`** — one password per file, single line:
-```
-secrets/db_password.txt
-secrets/db_root_password.txt
-secrets/wp_admin_password.txt
-secrets/wp_user_password.txt
-```
+Then fill in the passwords in each file under `secrets/` and the values in `srcs/.env`.
 
 ---
 
@@ -39,14 +23,20 @@ secrets/wp_user_password.txt
 ```
 .
 ├── Makefile
-├── secrets/                          # ignored by git
-│   ├── credentials.txt
+├── setup.sh
+├── secrets.example/              # template — copy to secrets/ and fill in
+│   ├── db_password.txt
+│   ├── db_root_password.txt
+│   ├── wp_admin_password.txt
+│   └── wp_user_password.txt
+├── secrets/                      # ignored by git — fill in before make
 │   ├── db_password.txt
 │   ├── db_root_password.txt
 │   ├── wp_admin_password.txt
 │   └── wp_user_password.txt
 └── srcs/
-    ├── .env                          # ignored by git
+    ├── .env                      # ignored by git — fill in before make
+    ├── .env.example              # template
     ├── docker-compose.yml
     └── requirements/
         ├── mariadb/
@@ -70,15 +60,9 @@ secrets/wp_user_password.txt
 make          # creates /home/abbouras/data/, builds and starts
 make down     # stops and removes containers
 make re       # full rebuild from scratch
-```
-
-Useful commands for debugging:
-
-```bash
-docker exec -it mariadb mysql -uroot -p
-docker exec -it wordpress ls /var/www/html
-docker exec -it nginx nginx -t
-docker volume inspect srcs_mariadb_data
+make fclean   # stops containers, removes volumes and data
+make db       # connects to MariaDB interactively
+make db-check # shows databases and tables non-interactively
 ```
 
 ---
